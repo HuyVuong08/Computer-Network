@@ -1,0 +1,58 @@
+1.  My computer and server both opperate on HTTP 1.1
+
+2.  Accept Language: en-US,en;q=0.5
+
+3.  My IP address:                          192.168.1.106
+    gaia.cs.umass.edu server's IP address:  221.133.13.123
+
+4.  The status code returned was 200 OK
+
+5.  The file was last modified on Wednesday, February 27, 2013 at 01:04:01 GMT
+
+6.  128 bytes of content are being returned
+
+7.  I do not see any different headings between the two windows
+
+8.  No there is no IF-MODIFIED-SINCE line in the GET message.
+
+9.  The server did explicitly return the contents of the file. Wireshark includes 
+    a section titled “Line-Based Text Data” which shows what the server sent back 
+    to my browser which is specifically what the website showed when I brought it 
+    up on my browser.
+
+10. Yes in the second HTTP message an IF-MODIFIED-SINCE line is included. 
+    The information that follows is the date and time that I last accessed the webpage
+
+11. The HTTP status code is “304: Not Modified”
+    The server did not return the contents of the file because the browser simply 
+    retrieved the contents from its cache. Had the file been modified since it was last 
+    accessed, it would have returned the contents of the file, instead it simply told 
+    my browser to retrieve the old file from its cached memory.
+
+12. My browser only sent 1 HTTP GET request to the server. The Packet that contained the 
+    GET message was packet number 289.
+
+13. The packet that contains the status code and phrase which the server sent in response 
+    to the GET message was packet number 301.
+
+14. The code and phrase in the response was 200 OK
+
+15. The data was sent in 3 TCP segments to the browser, then reassembled.
+
+16. My browser sent 3 http GET message requests. One each to each for each of the following: 
+    The initial page, the Pearson logo, and the cover of the Pearson book, 5th Edition.
+    Initial Page address: 128.119.245.12
+    Pearson Logo: 165.193.140.14
+    Pearson book, 5th Edition: 128.119.240.90
+
+17. The browser downloaded the two images in serially. I believe this to be the case because 
+    the first image was requested and sent before the second image was requested by the browser. 
+    Had they been running in parallel, both files would have been requested then would have 
+    returned in the same time period. In this case however, the second image was only requested 
+    after the first image came back.
+
+18. The servers intial response was “401 Authentication Required”
+
+19. The new field that is now included is the authorization field. This is included because we 
+    sent the server a username and password along with our request stating that we were authorized 
+    to receive the page.

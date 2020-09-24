@@ -1,0 +1,638 @@
+﻿ROUTER_VPN
+	Router>enable 
+	Router#configure terminal 
+	Router(config)#interface tunnel 1
+	Router(config-if)#ip address 10.0.100.1 255.255.255.0
+	Router(config-if)#tunnel source serial 0/0/1
+	Router(config-if)#tunnel destination 10.0.50.1
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#ip route 192.168.1.0 255.255.255.0 10.0.100.2
+	Router(config)#ip route 192.168.0.0 255.255.255.0 10.0.20.2
+	Router(config)#ip route 172.168.0.0 255.255.0.0 10.0.20.2
+	Router(config)#ip route 0.0.0.0 0.0.0.0 serial 0/0/1
+	Router(config)#exit
+	Router#exit
+
+
+ROUTER_CAMPUS1
+	Router>enable 
+	Router#configure terminal 
+	Router(config)#interface tunnel 2
+	Router(config-if)#ip address 10.0.100.2 255.255.255.0
+	Router(config-if)#tunnel source se0/0/0
+	Router(config-if)#tunnel destination 10.0.40.1 
+	Router(config-if)#no shut
+	Router(config-if)#exit
+	Router(config)#ip route 172.168.0.0 255.255.0.0 10.0.100.1
+	Router(config)#ip route 192.168.0.0 255.255.255.0 10.0.100.1
+	Router(config)#ip route 0.0.0.0 0.0.0.0 serial 0/0/0
+	Router(config)#exit
+	Router#exit
+
+
+ROUTER_INTERNET
+	Router>enable
+	Router#configure terminal
+	Router(config)#interface fastEthernet 0/0
+	Router(config-if)#ip address 10.0.200.1 255.255.255.252
+	Router(config-if)#no shutdown 
+	Router(config)#interface serial 0/0/0
+	Router(config-if)#ip address 10.0.30.1 255.255.255.252
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface serial 0/1/0
+	Router(config-if)#ip address 10.0.50.2 255.255.255.252
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface serial 0/0/1
+	Router(config-if)#ip address 10.0.40.2 255.255.255.252
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#ip route 192.168.0.0 255.255.255.0 10.0.30.2
+	Router(config)#ip route 172.168.0.0 255.255.0.0 10.0.30.2
+	Router(config)#exit
+	Router#show ip interface brief 
+	Router#show ip route 
+	Router#exit
+
+
+PC_CAMPUS1
+	IP: 192.168.1.2 255.255.255.0	
+	GATEWAY: 192.168.1.1
+
+
+GOOGLE
+	IP: 10.0.200.2 255.255.255.252
+	GATEWAY: 10.0.200.1
+
+
+ROUTER_NEW
+	Router>enable 
+	Router#configure terminal 
+	Router(config)#access-list 1 permit 172.168.4.98 0.0.0.3
+	Router(config)#access-list 2 deny 172.168.4.80 0.0.0.15
+	Router(config)#access-list 2 deny 172.168.4.32 0.0.0.31
+	Router(config)#access-list 2 deny 172.168.0.128 0.0.0.63
+	Router(config)#access-list 2 deny 172.168.0.0 0.0.0.127
+	Router(config)#access-list 2 deny 172.168.4.64 0.0.0.15
+	Router(config)#access-list 2 deny 172.168.4.0 0.0.0.31
+	Router(config)#access-list 2 permit any
+	Router(config)#access-list 9 deny 172.168.1.64 0.0.0.63
+	Router(config)#access-list 9 deny 172.168.4.32 0.0.0.27
+	Router(config)#access-list 9 deny 172.168.0.192 0.0.0.63
+	Router(config)#access-list 9 deny 172.168.4.0 0.0.0.31
+	Router(config)#access-list 9 deny 172.168.0.0 0.0.0.127
+	Router(config)#access-list 9 permit any
+	Router(config)#access-list 10 deny 172.168.0.0 0.0.0.127
+	Router(config)#access-list 10 deny 172.168.4.0 0.0.0.31
+	Router(config)#access-list 10 deny 172.168.4.32 0.0.0.31
+	Router(config)#access-list 10 permit any 
+	Router(config)#interface gigabitEthernet 2/0
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface gigabitEthernet 2/0.2
+	Router(config-subif)#encapsulation dot1Q 2
+	Router(config-subif)#ip address 172.168.1.65 255.255.255.192
+	Router(config-subif)#ip helper-address 172.168.4.98
+	Router(config-subif)#ip access-group 2 out
+	Router(config-subif)#ip nat inside 
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 2/0.8
+	Router(config-subif)#encapsulation dot1Q 8
+	Router(config-subif)#ip address 172.168.4.81 255.255.255.240
+	Router(config-subif)#ip access-group 9 out
+	Router(config-subif)#ip nat inside 
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 2/0.9
+	Router(config-subif)#encapsulation dot1Q 9
+	Router(config-subif)#ip address 172.168.4.33 255.255.255.224
+	Router(config-subif)#ip access-group 1 out
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 3/0
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface gigabitEthernet 3/0.2
+	Router(config-subif)#encapsulation dot1Q 2
+	Router(config-subif)#ip address 172.168.0.193 255.255.255.192
+	Router(config-subif)#ip helper-address 172.168.4.98
+	Router(config-subif)#ip access-group 2 out
+	Router(config-subif)#ip nat inside 
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 3/0.8
+	Router(config-subif)#encapsulation dot1Q 8
+	Router(config-subif)#ip address 172.168.4.65 255.255.255.240
+	Router(config-subif)#ip access-group 9 out
+	Router(config-subif)#ip nat inside 
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 3/0.9
+	Router(config-subif)#encapsulation dot1Q 9
+	Router(config-subif)#ip address 172.168.4.1 255.255.255.224
+	Router(config-subif)#ip access-group 1 out
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 4/0
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface gigabitEthernet 4/0.8
+	Router(config-subif)#encapsulation dot1Q 8
+	Router(config-subif)#ip address 172.168.0.129 255.255.255.192
+	Router(config-subif)#ip access-group 9 out
+	Router(config-subif)#ip nat inside 
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 4/0.9
+	Router(config-subif)#encapsulation dot1Q 9
+	Router(config-subif)#ip address 172.168.0.1 255.255.255.128
+	Router(config-subif)#ip access-group 1 out
+	Router(config-subif)#exit
+	Router(config)#interface gigabitEthernet 5/0
+	Router(config-if)#ip address 172.168.4.97 255.255.255.252
+	Router(config-subif)#ip nat inside 
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface gigabitEthernet 1/0
+	Router(config-if)#ip address 172.168.4.113 255.255.255.240
+	Router(config-subif)#ip nat inside 
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface serial 6/0
+	Router(config-if)#ip address 10.0.10.2 255.255.255.252
+	Router(config-subif)#ip nat inside 
+	Router(config-if)#no shut
+	Router(config-if)#exit
+	Router(config)#interface serial 0/0
+	Router(config-if)#ip address 10.0.20.2 255.255.255.252
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#interface serial 7/0
+	Router(config-if)#ip address 10.0.30.2 255.255.255.252
+	Router(config-if)#ip nat outside 
+	Router(config-if)#ip access-group 10 out
+	Router(config-if)#no shutdown 
+	Router(config-if)#exit
+	Router(config)#ip route 10.0.20.0 255.255.255.252 serial 0/0
+	Router(config)#ip route 192.168.1.0 255.255.255.0 serial 0/0
+	Router(config)#ip route 10.0.10.0 255.255.255.252 serial 6/0
+	Router(config)#ip route 192.168.0.0 255.255.255.0 serial 6/0
+	Router(config)#ip route 0.0.0.0 0.0.0.0 serial 7/0
+	Router(config)#ip nat inside source list 10 interface serial 7/0
+	Router(config)#exit
+	Router#show ip interface brief 
+	Router#show ip route 
+	Router#show ip nat statistics 
+	Router#show ip nat translations 
+	Router#exit
+
+
+CURRENT NETWORK
+	ROUTER_OLD
+		Router>enable 
+		Router#configure terminal 
+		Router(config)#interface gigabitEthernet 1/0
+		Router(config-if)#ip address 192.168.0.1 255.255.255.0
+		Router(config-if)#no shutdown 
+		Router(config-if)#exit
+		Router(config)#interface Serial 0/0
+		Router(config-if)#ip address 10.0.10.1 255.255.255.252
+		Router(config-if)#no shutdown 
+		Router(config-if)#exit
+		Router(config)#ip route 0.0.0.0 0.0.0.0 10.0.10.2
+		Router(config)#end
+		Router#show ip interface brief
+		Router#show ip route 
+		Router#exit
+
+	SWITCH_0
+		Do nothing
+
+	SWITCH_1
+		Do nothing
+
+	SWITCH_2
+		Do nothing
+
+	SERVER_DHCP
+		IP	: 192.168.0.2 255.255.255.0
+		GATEWAY	: 192.168.0.1
+
+	PC
+		IP	: 192.168.0.3 255.255.255.0
+		GATEWAY	: 192.168.0.1
+
+	LAPTOP
+		IP	: 192.168.0.4 255.255.255.0
+		GATEWAY	: 192.168.0.1
+ADMINISTRATIVE ROOM
+	Switch0
+		Do nothing
+
+	Admin_PC1
+		IP	: 172.168.4.114 255.255.255.240
+		GATEWAY	: 172.168.4.113
+
+	Admin_PC10
+		IP	: 172.168.4.115 255.255.255.240
+		GATEWAY	: 172.168.4.113
+
+1ST-5TH FLOOR
+	SWITCH_1-5
+		Switch>enable 
+		Switch#configure terminal 
+		Switch(config)#vlan 8
+		Switch(config-vlan)#name TR
+		Switch(config-vlan)#exit
+		Switch(config)#vlan 9
+		Switch(config-vlan)#name SS
+		Switch(config-vlan)#exit
+		Switch(config)#interface fastEthernet 2/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 3/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 5/1
+		Switch(config-if)#switchport mode access 
+		Switch(config-if)#switchport access vlan 9
+		Switch(config-if)#exit
+		Switch(config)#interface gigabitEthernet 0/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#end
+		Switch#show vlan brief 
+		Switch#show interfaces trunk 
+		Switch#exit
+
+	SERVER ROOM
+		SWITCH
+			Do nothing
+
+		SERVER
+			IP	: 172.168.4.98 255.255.255.252
+			GATEWAY	: 172.168.4.97
+			POOLNAME	: 6THFLOOR_Lab
+			gateway		: 172.168.0.193
+			start		: 172.168.0.194
+			subnet mask	: 255.255.255.192
+			max user	: 61
+			POOLNAME	: 7THFLOOR_Lab
+			gateway		: 172.168.1.65
+			start		: 172.168.1.66
+			subnet mask	: 255.255.255.192
+			max user	: 61
+			
+	LARGE THEORY ROOM
+		LTR_1-5_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 8
+			Switch(config-vlan)#name TR
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 8
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		LTR_1-5_PC
+			IP: 172.168.0.130 255.255.255.192
+			GATEWAY: 172.168.0.129
+
+		LTR_1-5_GATEWAY
+			IP: 172.168.0.3 255.255.255.128
+			GATEWAY: 172.168.0.1
+
+	SMALL THEORY ROOM
+		STR_1-5_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 8
+			Switch(config-vlan)#name PH
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 8
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		STR_1-5_PC
+			IP: 172.168.0.131 255.255.255.192
+			GATEWAY: 172.168.0.129
+
+		STR_1-5_GATEWAY
+			IP: 172.168.0.4 255.255.255.128
+			GATEWAY: 172.168.0.1
+
+	HALLWAY
+		CAM_1-5
+			IP: 172.168.0.2 255.255.255.128
+			GATEWAY: 172.168.0.1
+
+
+7TH FLOOR
+	SWITCH_7
+		Switch>enable 
+		Switch#configure terminal 
+		Switch(config)#vlan 2
+		Switch(config-vlan)#name LAB
+		Switch(config-vlan)#exit
+		Switch(config)#vlan 8
+		Switch(config-vlan)#name TR
+		Switch(config-vlan)#exit
+		Switch(config)#vlan 9
+		Switch(config-vlan)#name SS
+		Switch(config-vlan)#exit
+		Switch(config)#interface fastEthernet 1/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 2/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 3/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 5/1
+		Switch(config-if)#switchport mode access 
+		Switch(config-if)#switchport access vlan 9
+		Switch(config-if)#exit
+		Switch(config)#interface gigabitEthernet 0/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#end
+		Switch#show interfaces trunk 
+		Switch#exit
+
+	COMPUTER ROOM
+		LAB_7_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 2
+			Switch(config-vlan)#name LAB
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 2
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 2/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 2
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief 
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		LAB_7_PC01
+			DHCP
+
+		LAB_7_PC41
+			DHCP
+
+		LAB_7_GATEWAY
+			IP: 172.168.4.34 255.255.255.224
+			GATEWAY: 172.168.4.33
+
+	LARGE THEORY ROOM
+		LTR_7_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 8
+			Switch(config-vlan)#name TR
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 8
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief 
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		LTR_7_PC
+			IP: 172.168.4.83 255.255.255.240
+			GATEWAY: 172.168.4.81
+
+		LTR_7_GATEWAY
+			IP: 172.168.4.38 255.255.255.224
+			GATEWAY: 172.168.4.33
+
+	SMALL THEORY ROOM
+		STR_7_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 8
+			Switch(config-vlan)#name TR
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 8
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief 
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		STR_7_PC
+			IP: 172.168.4.82 255.255.255.240
+			GATEWAY: 172.168.4.81
+
+		STR_7_GATEWAY
+			IP: 172.168.4.39 255.255.255.224
+			GATEWAY: 172.168.4.33
+
+
+	HALLWAY
+		CAM_7
+			IP: 172.168.4.42 255.255.255.224
+			GATEWAY: 172.168.4.33
+
+
+6TH FLOOR
+	SWITCH_8
+		Switch>enable 
+		Switch#configure terminal 
+		Switch(config)#vlan 2
+		Switch(config-vlan)#name LAB
+		Switch(config-vlan)#exit
+		Switch(config)#vlan 8
+		Switch(config-vlan)#name TR
+		Switch(config-vlan)#exit
+		Switch(config)#vlan 9
+		Switch(config-vlan)#name SS
+		Switch(config-vlan)#exit
+		Switch(config)#interface fastEthernet 1/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 2/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 3/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#exit
+		Switch(config)#interface fastEthernet 5/1
+		Switch(config-if)#switchport mode access 
+		Switch(config-if)#switchport access vlan 9
+		Switch(config-if)#exit
+		Switch(config)#interface gigabitEthernet 0/1
+		Switch(config-if)#switchport mode trunk 
+		Switch(config-if)#end
+		Switch#show vlan brief 
+		Switch#show interfaces trunk 
+		Switch#exit
+
+	COMPUTER ROOM
+		LAB_8_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 2
+			Switch(config-vlan)#name LAB
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 2
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 2/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 2
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief 
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		LAB_8_PC01
+			DHCP
+
+		LAB_8_PC41
+			DHCP
+
+		LAB_8_GATEWAY
+			IP: 172.168.4.2 255.255.255.224
+			GATEWAY: 172.168.4.1
+
+	LARGE THEORY ROOM
+		PHL_8_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 8
+			Switch(config-vlan)#name TR
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 8
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		LTR_8_PC
+			IP: 172.168.4.66 255.255.255.240
+			GATEWAY: 172.168.4.65
+
+		LTR_8_GATEWAY
+			IP: 172.168.4.8 255.255.255.224
+			GATEWAY: 172.168.4.1
+
+	SMALL THEORY ROOM
+		STR_8_SWITCH
+			Switch>enable 
+			Switch#configure terminal 
+			Switch(config)#vlan 8
+			Switch(config-vlan)#name TR
+			Switch(config-vlan)#exit
+			Switch(config)#vlan 9
+			Switch(config-vlan)#name SS
+			Switch(config-vlan)#exit
+			Switch(config)#interface fastEthernet 1/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 8
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 3/1
+			Switch(config-if)#switchport mode access 
+			Switch(config-if)#switchport access vlan 9
+			Switch(config-if)#exit
+			Switch(config)#interface fastEthernet 0/1
+			Switch(config-if)#switchport mode trunk 
+			Switch(config-if)#end
+			Switch#show vlan brief
+			Switch#show interfaces trunk 
+			Switch#exit
+
+		STR_8_PC
+			IP: 172.168.4.69 255.255.255.240
+			GATEWAY: 172.168.4.65
+
+		STR_8_GATEWAY
+			IP: 172.168.4.11 255.255.255.224
+			GATEWAY: 172.168.4.1
+
+	HALLWAY
+		CAM_8
+			IP: 172.168.4.20 255.255.255.224
+			GATEWAY: 172.168.4.1

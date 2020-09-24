@@ -1,0 +1,7 @@
+1. List three difference protocols:
+	- TCP
+	- ARP
+	- DNS
+2. Time taken from sending request until recieve a reply message: 0.262 seconds
+3. Internet address of gaia.cs.amass.edu: 128.119.245.12
+   Internet address of my computer:       192.168.1.106

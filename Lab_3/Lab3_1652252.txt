@@ -1,0 +1,33 @@
+1.  The source IP address was 192.168.102 using source port 1161.
+
+2.  The destination IP address is 128.119.245.12 receiving on port 80.
+
+3.  My IP address source is 10.36.40.136 sending on port 54360.
+
+4.  The sequence number of the segment used to initiate the TCP connection is 0.  
+    We can see that the message contains a SYN flag indicating that it is a SYN segment.
+
+5.  The sequence number of the SYNACK segment is 0.
+    The value of the acknowledgement field is 1. This value is determined by the initial 
+    sequence number +1.
+    The message carries flags that show it to be a SYN ACK message.
+
+6.  The sequence number of the TCP segment containing the HTTP Post Command is 149571.
+
+8.  The length of each of the first TCP segment is 708. The following segments are all 1514.
+
+9.  The minimum amount of available buffer space is listed as 65535. The sender is never 
+    throttled because we never reach full capacity of the window.
+
+10. No, no segments were ever retransmitted. This is shown by the fact that an old 
+    Acknowledgement number was never resent in order to re-request former packets.
+
+11. The receiver is typically acking 432 bits. There are cases where the receiver acks every 
+    other segment. This is shown when more than one ack occurs in a row.
+
+12. The throughput can be calculated by using the value of the last ack(149,629)- the first 
+    sequence number(1) divided by the time since first frame (1.6) = 93517.6 bps.
+
+13. The TCP slowstart phase begins at just above seq number 5000, and ends just before 
+    sequence number 10000. Congestion avoidance takes over at 10000.
+
